@@ -19,6 +19,7 @@ interface Role {
     permission: {
       id: string
       name: string
+      description: string | null
     }
   }>
   userRoles?: Array<{
