@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model for authentication
+model User {
+  id        String    @id @default(uuid())
+  email     String    @unique
+  password  String    // Hashed password
+  createdAt DateTime  @default(now()) @map("created_at")
+  userRoles UserRole[]
+
+  @@map("users")
+}
+
+// Role model - defines different roles in the system
+model Role {
+  id          String          @id @default(uuid())
+  name        String          @unique
+  description String?
+  createdAt   DateTime        @default(now()) @map("created_at")
+  rolePermissions RolePermission[]
+  userRoles   UserRole[]
+
+  @@map("roles")
+}
+
+// Permission model - defines individual permissions
+model Permission {
+  id          String          @id @default(uuid())
+  name        String          @unique
+  description String?
+  createdAt   DateTime        @default(now()) @map("created_at")
+  rolePermissions RolePermission[]
+
+  @@map("permissions")
+}
+
+// Junction table: Many-to-Many relationship between Roles and Permissions
+model RolePermission {
+  id           String     @id @default(uuid())
+  roleId       String     @map("role_id")
+  permissionId String     @map("permission_id")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+// Junction table: Many-to-Many relationship between Users and Roles
+model UserRole {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  roleId    String   @map("role_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId])
+  @@map("user_roles")
+}
