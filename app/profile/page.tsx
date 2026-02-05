@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import DashboardHeader from '@/components/natural-language/dashboard/DashboardHeader'
 import { User, Mail, Shield, KeyRound } from 'lucide-react'
 
-type UserRole = { role: { name: string; rolePermissions: { permission: { name: string }[] } } }
+type UserRole = { role: { name: string; rolePermissions: { permission: { name: string } }[] } }
 type StoredUser = {
   id?: string
   email?: string
