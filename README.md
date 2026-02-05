@@ -29,49 +29,52 @@ Imagine a school where teachers can grade papers, students can submit homework, 
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone <your-repo-url>
    cd RBAC
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Set up environment variables**
-   
+
    Create a `.env` file in the root directory:
+
    ```env
    DATABASE_URL="postgresql://user:password@localhost:5432/rbac_db?schema=public"
    JWT_SECRET="your-super-secret-jwt-key-change-this-in-production"
-   NEXTAUTH_URL="http://localhost:3000"
-   NEXTAUTH_SECRET="your-nextauth-secret-key"
    ```
 
 4. **Set up the database**
+
    ```bash
    # Generate Prisma Client
    npm run db:generate
-   
+
    # Push schema to database
    npm run db:push
-   
+
    # (Optional) Seed database with sample data
    npm run db:seed
    ```
 
 5. **Create a test user** (optional - you can also use signup)
-   
+
    You can create a test user directly in the database or use the signup feature in the app.
 
 6. **Run the development server**
+
    ```bash
    npm run dev
    ```
 
 7. **Open your browser**
-   
+
    Navigate to [http://localhost:3000](http://localhost:3000)
 
 ## 🔑 Test Credentials
@@ -187,21 +190,24 @@ The application uses the following tables:
 - **Styling**: Tailwind CSS
 - **Icons**: Lucide React
 
-## 🔒 Security Features
+## 🔒 Security & Backend Features
 
 - Password hashing with bcrypt
-- JWT-based authentication
-- Protected API routes
-- Input validation
+- JWT-based authentication (stateless token-based sessions)
+- Protected API routes with role-based access control
+- Schema-based input validation using Zod on critical endpoints
+- In-memory rate limiting per IP + route (e.g., login, signup, RBAC mutations)
 - SQL injection prevention (via Prisma)
 
 ## 📝 API Endpoints
 
 ### Authentication
+
 - `POST /api/auth/signup` - Create new user
 - `POST /api/auth/login` - Authenticate user
 
 ### Permissions
+
 - `GET /api/permissions` - Get all permissions
 - `POST /api/permissions` - Create permission
 - `GET /api/permissions/[id]` - Get permission by ID
@@ -209,6 +215,7 @@ The application uses the following tables:
 - `DELETE /api/permissions/[id]` - Delete permission
 
 ### Roles
+
 - `GET /api/roles` - Get all roles
 - `POST /api/roles` - Create role
 - `GET /api/roles/[id]` - Get role by ID
@@ -218,6 +225,7 @@ The application uses the following tables:
 - `POST /api/roles/[id]/permissions` - Assign permissions to role
 
 ### Natural Language
+
 - `POST /api/natural-language` - Process natural language command
 
 ## 🚢 Deployment
@@ -232,6 +240,7 @@ The application uses the following tables:
 ### Environment Variables for Production
 
 Make sure to set:
+
 - `DATABASE_URL` - Your production database URL
 - `JWT_SECRET` - A strong, random secret key
 - `NEXTAUTH_URL` - Your production URL

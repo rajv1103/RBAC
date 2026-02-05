@@ -9,6 +9,7 @@
 ## Step-by-Step Setup
 
 ### 1. Install Dependencies
+
 ```bash
 npm install
 ```
@@ -20,8 +21,6 @@ Create a `.env` file in the root directory:
 ```env
 DATABASE_URL="postgresql://username:password@localhost:5432/rbac_db?schema=public"
 JWT_SECRET="your-super-secret-jwt-key-minimum-32-characters-long"
-NEXTAUTH_URL="http://localhost:3000"
-NEXTAUTH_SECRET="your-nextauth-secret-key-minimum-32-characters"
 ```
 
 **Important:** Replace the placeholder values with your actual database credentials and generate secure random strings for the secrets.
@@ -43,6 +42,7 @@ npm run db:seed
 ```
 
 This will create:
+
 - A test user: `admin@example.com` / `admin123`
 - Sample permissions (8 permissions)
 - Sample roles (Administrator, Content Editor, Viewer)
@@ -61,10 +61,12 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ## First Login
 
 If you ran the seed script:
+
 - **Email:** `admin@example.com`
 - **Password:** `admin123`
 
 If you didn't run the seed script:
+
 1. Click "Don't have an account? Sign up"
 2. Create your account
 3. Log in with your credentials
@@ -72,16 +74,19 @@ If you didn't run the seed script:
 ## Troubleshooting
 
 ### Database Connection Error
+
 - Verify PostgreSQL is running
 - Check your `DATABASE_URL` format
 - Ensure the database exists
 
 ### Module Not Found Errors
+
 - Delete `node_modules` and `.next` folders
 - Run `npm install` again
 - Run `npm run db:generate`
 
 ### Port Already in Use
+
 - Change the port: `npm run dev -- -p 3001`
 - Or kill the process using port 3000
 

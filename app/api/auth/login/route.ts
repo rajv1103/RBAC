@@ -1,6 +1,16 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import { comparePassword, generateToken } from '@/lib/auth'
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { comparePassword, generateToken } from "@/lib/auth";
+import { rateLimit } from "@/lib/rate-limit";
+import { z } from "zod";
+
+const loginSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
 
 /**
  * POST /api/auth/login
@@ -8,18 +18,28 @@ import { comparePassword, generateToken } from '@/lib/auth'
  */
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { email, password } = body
+    const limited = rateLimit(request, {
+      windowMs: 60_000,
+      max: 10,
+      keyPrefix: "login",
+    });
+    if (limited) return limited;
 
-    // Validate input
-    if (!email || !password) {
+    const body = await request.json();
+    const parsed = loginSchema.safeParse(body);
+
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: 'Email and password are required' },
+        {
+          error: "Validation error",
+          details: parsed.error.flatten().fieldErrors,
+        },
         { status: 400 }
-      )
+      );
     }
 
-    // Find user
+    const { email, password } = parsed.data;
+
     const user = await prisma.user.findUnique({
       where: { email },
       include: {
@@ -29,47 +49,43 @@ export async function POST(request: NextRequest) {
               include: {
                 rolePermissions: {
                   include: {
-                    permission: true
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    })
+                    permission: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
 
     if (!user) {
       return NextResponse.json(
-        { error: 'Invalid email or password' },
+        { error: "Invalid email or password" },
         { status: 401 }
-      )
+      );
     }
 
-    // Verify password
-    const isValidPassword = await comparePassword(password, user.password)
+    const isValidPassword = await comparePassword(password, user.password);
     if (!isValidPassword) {
       return NextResponse.json(
-        { error: 'Invalid email or password' },
+        { error: "Invalid email or password" },
         { status: 401 }
-      )
+      );
     }
 
-    // Generate JWT token
-    const token = generateToken(user.id)
-
-    // Return user data (without password) and token
-    const { password: _, ...userWithoutPassword } = user
+    const token = generateToken(user.id);
+    const { password: _, ...userWithoutPassword } = user;
 
     return NextResponse.json({
       token,
-      user: userWithoutPassword
-    })
+      user: userWithoutPassword,
+    });
   } catch (error) {
-    console.error('Login error:', error)
+    console.error("Login error:", error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: "Internal server error" },
       { status: 500 }
-    )
+    );
   }
 }
