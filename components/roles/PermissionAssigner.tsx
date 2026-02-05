@@ -133,10 +133,10 @@ export default function PermissionAssigner({ roles, onUpdate }: PermissionAssign
   return (
     <div className="grid gap-6 lg:grid-cols-3">
       {/* Role Selection */}
-      <Card className="rounded-3xl border-0 bg-white/80 dark:bg-slate-950/80 shadow-lg shadow-slate-900/20">
+      <Card className="rounded-3xl border border-orange-500/20 glass-card">
         <CardHeader>
-          <CardTitle>Select Role</CardTitle>
-          <CardDescription>Choose a role to manage its permissions</CardDescription>
+          <CardTitle className="text-white">Select Role</CardTitle>
+          <CardDescription className="text-neutral-400">Choose a role to manage its permissions</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
@@ -144,7 +144,7 @@ export default function PermissionAssigner({ roles, onUpdate }: PermissionAssign
               <Button
                 key={role.id}
                 variant={selectedRole?.id === role.id ? 'default' : 'outline'}
-                className="w-full justify-start rounded-2xl border-slate-200/80 dark:border-slate-700/80 data-[state=true]:border-emerald-400/80 data-[state=true]:bg-emerald-500/10 transition-all"
+                className="w-full justify-start rounded-2xl border-orange-500/20 data-[state=true]:border-orange-400/60 data-[state=true]:bg-orange-500/20 transition-all text-white hover:bg-orange-500/10"
                 onClick={() => setSelectedRole(role)}
               >
                 {role.name}
@@ -158,12 +158,12 @@ export default function PermissionAssigner({ roles, onUpdate }: PermissionAssign
       </Card>
 
       {/* Permission Selection */}
-      <Card className="lg:col-span-2 rounded-3xl border-0 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-50 shadow-xl shadow-slate-900/40">
+      <Card className="lg:col-span-2 rounded-3xl border border-orange-500/20 bg-neutral-900/90 text-white shadow-xl lava-glow-sm">
         <CardHeader>
-          <CardTitle>
+          <CardTitle className="text-white">
             {selectedRole ? `Permissions for ${selectedRole.name}` : 'Select a Role'}
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-neutral-400">
             {selectedRole
               ? 'Toggle permissions to assign or remove them from this role'
               : 'Choose a role from the left to manage its permissions'}
@@ -178,18 +178,18 @@ export default function PermissionAssigner({ roles, onUpdate }: PermissionAssign
                   return (
                     <div
                       key={permission.id}
-                      className="flex items-center gap-3 p-3 rounded-xl border border-slate-700/80 hover:border-emerald-400/80 hover:bg-emerald-500/10 cursor-pointer transition-all"
+                      className="flex items-center gap-3 p-3 rounded-xl border border-orange-500/20 hover:border-orange-400/50 hover:bg-orange-500/10 cursor-pointer transition-all"
                       onClick={() => togglePermission(permission.id)}
                     >
                       {isSelected ? (
-                        <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+                        <CheckCircle2 className="h-5 w-5 text-orange-400" />
                       ) : (
-                        <Circle className="h-5 w-5 text-slate-500" />
+                        <Circle className="h-5 w-5 text-neutral-500" />
                       )}
                       <div className="flex-1">
-                        <p className="font-medium text-sm sm:text-base">{permission.name}</p>
+                        <p className="font-medium text-sm sm:text-base text-white">{permission.name}</p>
                         {permission.description && (
-                          <p className="text-xs sm:text-sm text-slate-300">
+                          <p className="text-xs sm:text-sm text-neutral-400">
                             {permission.description}
                           </p>
                         )}
@@ -199,13 +199,13 @@ export default function PermissionAssigner({ roles, onUpdate }: PermissionAssign
                 })}
               </div>
               <div className="mt-4 flex justify-between items-center">
-                <p className="text-xs sm:text-sm text-slate-300">
+                <p className="text-xs sm:text-sm text-neutral-400">
                   {selectedPermissions.size} of {permissions.length} permissions selected
                 </p>
                 <Button
                   onClick={handleSave}
                   disabled={saving}
-                  className="rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold px-5"
+                  className="rounded-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white font-semibold px-5 lava-glow-sm"
                 >
                   <Save className="mr-2 h-4 w-4" />
                   {saving ? 'Saving...' : 'Save Changes'}
@@ -213,7 +213,7 @@ export default function PermissionAssigner({ roles, onUpdate }: PermissionAssign
               </div>
             </>
           ) : (
-            <div className="text-center py-12 text-gray-500">
+            <div className="text-center py-12 text-neutral-500">
               Please select a role to manage its permissions
             </div>
           )}

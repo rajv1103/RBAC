@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { useToast } from '@/components/ui/use-toast'
-import { Plus, Edit, Trash2, Users, Search, Settings } from 'lucide-react'
+import { Plus, Edit, Trash2, Search, Settings } from 'lucide-react'
 import PermissionAssigner from './PermissionAssigner'
 
 interface Role {
@@ -189,47 +189,42 @@ export default function RolesManager({ showAssignMode = false }: RolesManagerPro
     (r.description && r.description.toLowerCase().includes(searchTerm.toLowerCase()))
   )
 
-  // If in assign mode, show permission assigner
+  // If in assign mode, show permission assigner (page provides title)
   if (showAssignMode) {
     return (
       <div className="space-y-6">
-        <div>
-          <h2 className="text-2xl sm:text-3xl font-bold flex items-center gap-2 text-slate-900 dark:text-slate-50">
-            <span className="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-tr from-emerald-400 via-teal-400 to-sky-400 text-white shadow-md shadow-emerald-400/40">
-              <Settings className="h-5 w-5" />
-            </span>
-            Assign Permissions to Roles
-          </h2>
-          <p className="text-sm text-slate-600 dark:text-slate-300 mt-1">
-            Manage which permissions are assigned to each role through a visual matrix.
-          </p>
-        </div>
-        <div className="glass-card rounded-3xl p-5 sm:p-7">
+        {loading ? (
+          <div className="flex items-center justify-center py-16">
+            <div className="h-10 w-10 rounded-2xl bg-neutral-800 animate-pulse" />
+          </div>
+        ) : (
           <PermissionAssigner roles={roles} onUpdate={fetchRoles} />
-        </div>
+        )}
       </div>
     )
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl sm:text-3xl font-bold flex items-center gap-2 text-slate-900 dark:text-slate-50">
-            <span className="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-tr from-violet-500 via-indigo-500 to-sky-500 text-white shadow-md shadow-violet-500/40">
-              <Users className="h-5 w-5" />
-            </span>
-            Roles Management
-          </h2>
-          <p className="text-sm text-slate-600 dark:text-slate-300 mt-1">
-            Design higher‑level access bundles that you can assign to many users.
-          </p>
+      {/* Toolbar only - page provides title */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="relative flex-1 max-w-xs">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
+          <Input
+            placeholder="Search roles..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10 rounded-xl bg-neutral-900/80 border-orange-500/20 text-white placeholder:text-neutral-500 focus-visible:ring-orange-500"
+          />
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={handleCreate}>
+            <Button
+              onClick={handleCreate}
+              className="rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white shadow-lg lava-glow-sm"
+            >
               <Plus className="mr-2 h-4 w-4" />
-              Create Role
+              New Role
             </Button>
           </DialogTrigger>
           <DialogContent>
@@ -278,36 +273,25 @@ export default function RolesManager({ showAssignMode = false }: RolesManagerPro
         </Dialog>
       </div>
 
-      {/* Search */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
-        <Input
-          placeholder="Search roles..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-10 bg-white/70 dark:bg-slate-900/70 border-slate-200/80 dark:border-slate-700/80 focus-visible:ring-violet-500"
-        />
-      </div>
-
       {/* Roles Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {loading &&
           [1, 2, 3, 4, 5, 6].map((i) => (
             <div
               key={i}
-              className="h-32 rounded-2xl bg-slate-200/70 dark:bg-slate-800/60 animate-pulse"
+              className="h-32 rounded-2xl bg-neutral-800/60 animate-pulse"
             />
           ))}
 
         {!loading && filteredRoles.map((role) => (
           <Card
             key={role.id}
-            className="relative overflow-hidden rounded-2xl border-0 bg-white/80 dark:bg-slate-950/80 shadow-lg shadow-slate-900/10 hover:shadow-2xl hover:-translate-y-1 transition-all"
+            className="relative overflow-hidden rounded-2xl border border-orange-500/20 glass-card hover:-translate-y-1 transition-all duration-200"
           >
-            <div className="pointer-events-none absolute inset-x-0 -top-10 h-16 bg-gradient-to-r from-violet-400/35 via-indigo-400/35 to-sky-400/35 blur-2xl" />
+            <div className="pointer-events-none absolute inset-x-0 -top-10 h-16 bg-gradient-to-r from-orange-500/30 via-amber-500/20 to-orange-600/30 blur-2xl" />
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
-                <span className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-50">
+                <span className="text-base sm:text-lg font-semibold text-white">
                   {role.name}
                 </span>
                 <div className="flex gap-2">
@@ -315,7 +299,7 @@ export default function RolesManager({ showAssignMode = false }: RolesManagerPro
                     variant="ghost"
                     size="icon"
                     onClick={() => handleEdit(role)}
-                    className="hover:bg-violet-500/10 hover:text-violet-500"
+                    className="hover:bg-orange-500/10 hover:text-orange-400"
                   >
                     <Edit className="h-4 w-4" />
                   </Button>
@@ -335,13 +319,13 @@ export default function RolesManager({ showAssignMode = false }: RolesManagerPro
             </CardHeader>
             <CardContent>
               <div className="space-y-2 text-sm">
-                <p className="text-slate-600 dark:text-slate-300">
+                <p className="text-neutral-400">
                   <span className="font-medium">{role.rolePermissions?.length || 0}</span> permission(s)
                 </p>
-                <p className="text-slate-600 dark:text-slate-300">
+                <p className="text-neutral-400">
                   <span className="font-medium">{role.userRoles?.length || 0}</span> user(s)
                 </p>
-                <p className="text-[11px] text-slate-400 mt-2">
+                <p className="text-[11px] text-neutral-400 mt-2">
                   Created: {new Date(role.createdAt).toLocaleDateString()}
                 </p>
               </div>
@@ -351,7 +335,7 @@ export default function RolesManager({ showAssignMode = false }: RolesManagerPro
       </div>
 
       {filteredRoles.length === 0 && (
-        <div className="text-center py-12 text-gray-500">
+        <div className="text-center py-12 text-neutral-500">
           {searchTerm ? 'No roles found matching your search' : 'No roles yet. Create one to get started!'}
         </div>
       )}

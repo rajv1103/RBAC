@@ -6,19 +6,27 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useToast } from '@/components/ui/use-toast'
-import { Sparkles, Send, Loader2 } from 'lucide-react'
+import { Sparkles, Send, Loader2, Clock, CheckCircle2 } from 'lucide-react'
+
+interface HistoryItem {
+  command: string
+  result: any
+  timestamp: Date
+}
 
 /**
- * Natural Language Configuration Component
- * Allows admins to modify RBAC settings using plain English commands
+ * Natural Language Configuration — Polished
+ * - Strong visual hierarchy
+ * - Command chips + inline submit
+ * - Timeline-style command history
+ * - No extra dependencies
  */
 export default function NaturalLanguageConfig() {
   const [command, setCommand] = useState('')
   const [loading, setLoading] = useState(false)
-  const [history, setHistory] = useState<Array<{ command: string; result: any; timestamp: Date }>>([])
+  const [history, setHistory] = useState<HistoryItem[]>([])
   const { toast } = useToast()
 
-  // Example commands for reference
   const examples = [
     "Give the role 'Administrator' the permission to 'delete users'",
     "Create a new permission called 'publish content'",
@@ -33,102 +41,73 @@ export default function NaturalLanguageConfig() {
     setLoading(true)
     try {
       const token = localStorage.getItem('token')
-      const response = await fetch('/api/natural-language', {
+      const res = await fetch('/api/natural-language', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({ command: command.trim() })
       })
 
-      const data = await response.json()
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to process command')
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to process command')
-      }
+      setHistory(prev => [
+        { command: command.trim(), result: data, timestamp: new Date() },
+        ...prev
+      ])
 
-      // Add to history
-      setHistory(prev => [{
-        command: command.trim(),
-        result: data,
-        timestamp: new Date()
-      }, ...prev])
-
-      toast({
-        title: 'Success!',
-        description: data.message || 'Command executed successfully'
-      })
-
+      toast({ title: 'Command executed', description: data.message })
       setCommand('')
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to process command',
-        variant: 'destructive'
-      })
+    } catch (err: any) {
+      toast({ title: 'Error', description: err.message, variant: 'destructive' })
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl sm:text-3xl font-bold flex items-center gap-2 text-slate-900 dark:text-slate-50">
-          <span className="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-tr from-amber-400 via-rose-400 to-fuchsia-500 text-white shadow-md shadow-amber-400/40">
-            <Sparkles className="h-5 w-5" />
-          </span>
-          Natural Language Configuration
-        </h2>
-        <p className="text-sm text-gray-500 mt-1">
-          Modify RBAC settings using plain English commands
-        </p>
-      </div>
+    <div className="space-y-8">
+      {/* Header */}
 
-      <Card className="glass-card rounded-3xl">
+
+      {/* Command Input */}
+      <Card className="rounded-3xl border border-orange-500/20 glass-card">
         <CardHeader>
-          <CardTitle>Enter Command</CardTitle>
-          <CardDescription>
-            Type a command in plain English to modify the RBAC system
-          </CardDescription>
+          <CardTitle className="text-white">Command Console</CardTitle>
+          <CardDescription className="text-neutral-400">Describe what you want to change</CardDescription>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="command">Command</Label>
-              <div className="flex gap-2">
-                <Input
-                  id="command"
-                  value={command}
-                  onChange={(e) => setCommand(e.target.value)}
-                  placeholder="e.g., Give the role 'Admin' the permission to 'delete users'"
-                  disabled={loading}
-                    className="bg-white/70 dark:bg-slate-900/70 border-slate-200/80 dark:border-slate-700/80 focus-visible:ring-amber-500"
-                />
-                <Button type="submit" disabled={loading || !command.trim()}>
-                  {loading ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Send className="h-4 w-4" />
-                  )}
-                </Button>
-              </div>
+        <CardContent className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-2">
+            <Label htmlFor="command" className="text-neutral-300">Command</Label>
+            <div className="flex gap-2">
+              <Input
+                id="command"
+                value={command}
+                onChange={(e) => setCommand(e.target.value)}
+                placeholder="e.g. Give Admin permission to delete users"
+                disabled={loading}
+                className="bg-neutral-900/80 border-orange-500/20 text-white placeholder:text-neutral-500 focus-visible:ring-orange-500"
+              />
+              <Button type="submit" disabled={loading || !command.trim()} className="px-4 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white lava-glow-sm">
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              </Button>
             </div>
           </form>
 
-          {/* Example Commands */}
-          <div className="mt-6">
-            <Label className="mb-2 block">Example Commands:</Label>
-            <div className="space-y-2">
-              {examples.map((example, idx) => (
+          {/* Examples */}
+          <div className="space-y-2">
+            <Label className="text-neutral-300">Try one of these</Label>
+            <div className="flex flex-wrap gap-2">
+              {examples.map((ex, i) => (
                 <button
-                  key={idx}
+                  key={i}
                   type="button"
-                  onClick={() => setCommand(example)}
-                  className="block w-full text-left p-3 text-sm bg-amber-50/70 dark:bg-slate-900/70 rounded-lg border border-amber-100/60 dark:border-slate-700/80 hover:bg-amber-100/70 dark:hover:bg-slate-800 transition-colors"
+                  onClick={() => setCommand(ex)}
+                  className="rounded-full px-3 py-1 text-xs bg-orange-500/20 border border-orange-500/30 text-orange-200 hover:bg-orange-500/30 transition"
                 >
-                  "{example}"
+                  {ex}
                 </button>
               ))}
             </div>
@@ -136,37 +115,26 @@ export default function NaturalLanguageConfig() {
         </CardContent>
       </Card>
 
-      {/* Command History */}
+      {/* History Timeline */}
       {history.length > 0 && (
-        <Card className="glass-card rounded-3xl">
+        <Card className="rounded-3xl border border-orange-500/20 glass-card">
           <CardHeader>
-            <CardTitle>Command History</CardTitle>
-            <CardDescription>Recent commands and their results</CardDescription>
+            <CardTitle className="text-white">Execution History</CardTitle>
+            <CardDescription className="text-neutral-400">Recent successful commands</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {history.map((item, idx) => (
-                <div
-                  key={idx}
-                  className="p-4 border rounded-2xl bg-emerald-50/60 dark:bg-emerald-900/10 border-emerald-100/60 dark:border-emerald-800/60"
-                >
-                  <div className="flex items-start justify-between mb-2">
-                    <p className="font-medium text-sm text-gray-700 dark:text-gray-300">
-                      "{item.command}"
-                    </p>
-                    <span className="text-xs text-gray-500">
-                      {item.timestamp.toLocaleTimeString()}
-                    </span>
+            <div className="space-y-5">
+              {history.map((item, i) => (
+                <div key={i} className="relative pl-8">
+                  <div className="absolute left-0 top-1 h-5 w-5 rounded-full bg-orange-500/30 flex items-center justify-center">
+                    <CheckCircle2 className="h-3 w-3 text-orange-400" />
                   </div>
-                  <div className="mt-2 p-2 bg-green-50/80 dark:bg-green-900/20 rounded text-sm">
-                    <p className="text-green-700 dark:text-green-400">
-                      ✓ {item.result.message || 'Command executed successfully'}
-                    </p>
-                    {item.result.action && (
-                      <p className="text-xs text-gray-500 mt-1">
-                        Action: {item.result.action}
-                      </p>
-                    )}
+                  <div className="rounded-2xl p-4 bg-orange-500/10 border border-orange-500/20">
+                    <p className="text-sm font-medium text-white">“{item.command}”</p>
+                    <div className="mt-2 flex items-center justify-between text-xs text-neutral-400">
+                      <span>{item.result?.message || 'Command executed successfully'}</span>
+                      <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{item.timestamp.toLocaleTimeString()}</span>
+                    </div>
                   </div>
                 </div>
               ))}

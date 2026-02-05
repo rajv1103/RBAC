@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import DashboardHeader from '@/components/dashboard/DashboardHeader'
+import DashboardHeader from '@/components/natural-language/dashboard/DashboardHeader'
 import RolesManager from '@/components/roles/RolesManager'
 import { Users } from 'lucide-react'
 
@@ -25,24 +25,24 @@ export default function RolesPage() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen app-gradient-bg">
       <DashboardHeader />
       <main className="container mx-auto px-4 py-10 space-y-8 animate-fade-in-up">
         <section className="glass-card rounded-3xl px-6 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="h-11 w-11 rounded-2xl bg-gradient-to-tr from-violet-500 via-indigo-500 to-sky-500 flex items-center justify-center text-white shadow-lg shadow-violet-500/40">
+            <div className="h-11 w-11 rounded-2xl bg-gradient-to-tr from-orange-500 via-amber-500 to-orange-600 flex items-center justify-center text-white shadow-lg lava-glow-sm">
               <Users className="h-6 w-6" />
             </div>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-50">
+              <h1 className="text-2xl sm:text-3xl font-bold text-white">
                 Roles
               </h1>
-              <p className="text-sm text-slate-600 dark:text-slate-300">
+              <p className="text-sm text-neutral-400">
                 Structure your organization with clear, reusable access levels.
               </p>
             </div>
           </div>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-xs">
+          <p className="text-xs sm:text-sm text-neutral-500 max-w-xs">
             Map your real‑world teams into roles that can be assigned to any user.
           </p>
         </section>

@@ -68,41 +68,47 @@ export default function LoginForm() {
   }
 
   return (
-    <Card className="shadow-2xl">
+    <Card className="shadow-2xl border-orange-500/20 bg-neutral-900/50">
       <CardHeader className="space-y-1">
-        <CardTitle className="text-3xl font-bold text-center">
+        <CardTitle className="text-3xl font-bold text-center text-white">
           RBAC Management
         </CardTitle>
-        <CardDescription className="text-center">
+        <CardDescription className="text-center text-neutral-400">
           {isLogin ? 'Sign in to your account' : 'Create a new account'}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email" className="text-neutral-300">Email</Label>
             <Input
               id="email"
               type="email"
               placeholder="admin@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              className="bg-neutral-800/80 border-orange-500/20 text-white placeholder:text-neutral-500 focus-visible:ring-orange-500"
               required
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password" className="text-neutral-300">Password</Label>
             <Input
               id="password"
               type="password"
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              className="bg-neutral-800/80 border-orange-500/20 text-white placeholder:text-neutral-500 focus-visible:ring-orange-500"
               required
               minLength={6}
             />
           </div>
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button
+            type="submit"
+            className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white shadow-lg lava-glow-sm disabled:opacity-70"
+            disabled={loading}
+          >
             {isLogin ? (
               <>
                 <LogIn className="mr-2 h-4 w-4" />
@@ -122,7 +128,7 @@ export default function LoginForm() {
                 setIsLogin(!isLogin)
                 setPassword('')
               }}
-              className="text-primary hover:underline"
+              className="text-orange-400 hover:text-orange-300 hover:underline"
             >
               {isLogin
                 ? "Don't have an account? Sign up"

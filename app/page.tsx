@@ -1,171 +1,192 @@
 'use client'
 
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Shield, Sparkles, Compass, LockKeyhole } from 'lucide-react'
 
-/**
- * Public Landing Page
- * Shows a colorful animated marketing-style hero and links to all features.
- */
-export default function Home() {
+export default function Home(): JSX.Element {
   const router = useRouter()
 
-  // If the user is already authenticated, send them straight to the dashboard
   useEffect(() => {
-    const token = typeof window !== 'undefined'
-      ? localStorage.getItem('token')
-      : null
-    if (token) {
-      router.push('/dashboard')
-    }
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
+    if (token) router.push('/dashboard')
   }, [router])
 
   return (
-    <main className="min-h-screen relative overflow-hidden">
-      {/* Decorative blobs */}
-      <div className="pointer-events-none absolute inset-0 opacity-60">
-        <div className="absolute -top-40 -right-16 h-72 w-72 rounded-full bg-purple-500/40 blur-3xl animate-float-slow" />
-        <div className="absolute -bottom-32 -left-10 h-80 w-80 rounded-full bg-sky-400/40 blur-3xl animate-float-slow" />
+    <main className="min-h-screen app-gradient-bg">
+      {/* Fire / lava blobs */}
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute -top-40 -right-16 h-80 w-80 rounded-full bg-orange-500/25 blur-3xl animate-fire-spark" />
+        <div className="absolute -bottom-36 -left-10 h-96 w-96 rounded-full bg-amber-600/20 blur-3xl animate-float-slow" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[500px] w-[500px] rounded-full bg-orange-600/10 blur-3xl animate-ember-glow" />
       </div>
 
-      {/* Page content */}
       <div className="relative z-10 flex flex-col min-h-screen">
-        {/* Simple nav */}
-        <header className="px-6 sm:px-10 pt-6 flex items-center justify-between">
+        <header className="container mx-auto px-6 sm:px-10 py-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-2xl bg-gradient-to-tr from-sky-500 via-violet-500 to-fuchsia-500 flex items-center justify-center shadow-lg shadow-sky-500/40">
-              <Shield className="h-6 w-6 text-white" />
+            <div className="h-12 w-12 rounded-2xl bg-gradient-to-tr from-orange-500 via-amber-500 to-orange-600 flex items-center justify-center text-white shadow-lg lava-glow-sm">
+              <Shield className="h-6 w-6 text-white" aria-hidden />
             </div>
-            <div>
-              <p className="text-xs uppercase tracking-[0.25em] text-sky-700/80 dark:text-sky-300/80">
-                Secure by design
-              </p>
-              <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">
-                RBAC Studio
-              </p>
+            <div className="hidden sm:block">
+              <h2 className="text-lg font-semibold text-white">RBAC</h2>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
             <Link
               href="/login"
-              className="text-sm font-medium text-slate-700 hover:text-slate-900 dark:text-slate-200 dark:hover:text-white transition-colors"
+              className="text-sm font-medium text-orange-200 hover:text-white transition-colors"
             >
               Sign in
             </Link>
             <Link
               href="/login"
-              className="inline-flex items-center rounded-full bg-slate-900 text-slate-50 text-sm font-semibold px-4 py-1.5 shadow-lg shadow-slate-900/30 hover:-translate-y-[1px] hover:shadow-slate-900/40 transition-all"
+              className="inline-flex items-center rounded-full bg-orange-500 text-white text-sm font-semibold px-4 py-2 shadow-lg lava-glow-sm hover:bg-orange-400 hover:shadow-orange-500/40 transition-all"
             >
-              <LockKeyhole className="mr-1.5 h-4 w-4" />
+              <LockKeyhole className="mr-2 h-4 w-4" />
               Launch Console
             </Link>
           </div>
         </header>
 
-        {/* Hero */}
-        <section className="flex-1 flex flex-col lg:flex-row items-center justify-center px-6 sm:px-10 py-12 gap-12">
-          <div className="max-w-xl space-y-6 animate-fade-in-up">
-            <p className="inline-flex items-center gap-2 rounded-full bg-white/60 dark:bg-slate-900/60 px-3 py-1 text-xs font-medium text-sky-700 dark:text-sky-300 shadow-sm ring-1 ring-slate-200/80 dark:ring-slate-800/80">
-              <Sparkles className="h-3 w-3" />
-              Live, visual Role‑Based Access Control
-            </p>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50">
-              Turn complex permissions into a{' '}
-              <span className="bg-gradient-to-tr from-sky-500 via-violet-500 to-fuchsia-500 bg-clip-text text-transparent">
-                beautiful control center
-              </span>
-              .
+        <section className="container mx-auto px-6 sm:px-10 py-12 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div className="lg:col-span-7 max-w-2xl space-y-6">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
+              Turn complex permissions into a
+              <br />
+              <span className="bg-gradient-to-r from-orange-400 via-amber-400 to-orange-500 bg-clip-text text-transparent">control center on fire</span>
             </h1>
-            <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-lg">
-              Design roles, assign permissions, and even speak in natural language to shape your
-              security model. All in one colorful, animated dashboard.
+
+            <p className="text-base sm:text-lg text-neutral-300 max-w-xl">
+              Design roles, assign permissions and let your team manage access confidently — with
+              real-time updates, natural language configuration, and a responsive admin surface.
             </p>
 
             <div className="flex flex-wrap gap-3">
               <Link
                 href="/login"
-                className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-sky-500 via-violet-500 to-fuchsia-500 px-6 py-3 text-sm sm:text-base font-semibold text-white shadow-xl shadow-sky-500/40 hover:shadow-sky-500/60 hover:-translate-y-0.5 active:translate-y-0 transition-all"
+                className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 px-6 py-3 text-base font-semibold text-white shadow-xl lava-glow hover:from-orange-400 hover:to-amber-400 hover:-translate-y-0.5 transition-all"
+                aria-label="Get started — Sign up"
               >
                 <Sparkles className="mr-2 h-4 w-4" />
                 Get started now
               </Link>
               <Link
                 href="/dashboard"
-                className="inline-flex items-center justify-center rounded-xl border border-slate-900/10 bg-white/70 px-5 py-3 text-sm sm:text-base font-medium text-slate-800 hover:bg-white shadow-sm hover:-translate-y-0.5 transition-all dark:bg-slate-900/60 dark:text-slate-100 dark:border-slate-700 dark:hover:bg-slate-900"
+                className="inline-flex items-center justify-center rounded-xl border border-orange-500/40 bg-neutral-900/80 px-5 py-3 text-base font-medium text-orange-100 hover:bg-orange-500/20 hover:border-orange-400/60 transition-all"
+                aria-label="Skip to dashboard"
               >
                 <Compass className="mr-2 h-4 w-4" />
                 Skip to dashboard
               </Link>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 pt-4 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
-              <div className="flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                Real‑time updates across roles & permissions
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-sky-500 animate-pulse" />
+            <ul className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-neutral-400">
+              <li className="flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-orange-500 animate-pulse" />
+                Real-time updates across roles & permissions
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
                 Natural language configuration engine
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-violet-500 animate-pulse" />
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-orange-400 animate-pulse" />
                 Beautiful, responsive admin experience
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-fuchsia-500 animate-pulse" />
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-amber-400 animate-pulse" />
                 Built with Next.js, Prisma & Tailwind
-              </div>
-            </div>
+              </li>
+            </ul>
           </div>
 
-          {/* Feature grid */}
-          <div className="w-full max-w-md space-y-4 animate-fade-in-up lg:animate-none">
-            <div className="grid grid-cols-2 gap-4">
-              <FeatureCard
-                href="/permissions"
-                title="Permissions"
-                description="Create and organize fine‑grained capabilities."
-                color="from-sky-400/80 to-cyan-500/90"
-              />
-              <FeatureCard
-                href="/roles"
-                title="Roles"
-                description="Bundle permissions into reusable access levels."
-                color="from-violet-400/80 to-fuchsia-500/90"
-              />
-              <FeatureCard
-                href="/assign"
-                title="Assign"
-                description="Visually connect roles and permissions."
-                color="from-emerald-400/80 to-lime-400/90"
-              />
-              <FeatureCard
-                href="/natural-language"
-                title="Natural language"
-                description="Type a command. We handle the rest."
-                color="from-amber-400/80 to-rose-400/90"
-              />
-            </div>
+          <div className="lg:col-span-5 flex justify-center lg:justify-end">
+            <div className="relative w-full max-w-md">
+              <div className="rounded-3xl p-[1px] bg-gradient-to-tr from-orange-500 to-amber-600 shadow-2xl lava-glow">
+                <div className="rounded-3xl bg-neutral-950/95 p-5 sm:p-6 w-full border border-orange-500/10">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="h-8 w-8 rounded-md bg-gradient-to-tr from-orange-500 to-amber-500 flex items-center justify-center text-white">
+                        <Sparkles className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-white">RBAC</p>
+                        <p className="text-xs text-orange-300/80">Admin Console</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="h-2 w-10 rounded-full bg-neutral-700" />
+                      <div className="h-6 w-6 rounded-full bg-neutral-700" />
+                    </div>
+                  </div>
 
-            <div className="glass-card rounded-3xl p-4 sm:p-5 flex items-center gap-4">
-              <div className="h-12 w-12 rounded-2xl bg-gradient-to-tr from-emerald-400 to-sky-500 flex items-center justify-center text-white shadow-lg shadow-emerald-400/40">
-                <Sparkles className="h-6 w-6" />
+                  <div className="space-y-3">
+                    <div className="h-2.5 w-3/5 rounded-full bg-neutral-800" />
+                    <div className="h-24 rounded-xl bg-neutral-900/80 border border-orange-500/10 p-3">
+                      <div className="h-3 rounded-full bg-orange-500/60 w-[30%] mb-2" />
+                      <div className="h-2 rounded-full bg-amber-500/50 w-[50%] mb-1" />
+                      <div className="h-2 rounded-full bg-orange-400/40 w-[70%]" />
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div className="rounded-lg p-2 bg-neutral-800/80 border border-orange-500/10 text-center">
+                        <p className="text-xs text-orange-300/70">Roles</p>
+                        <p className="text-sm font-semibold text-white">24</p>
+                      </div>
+                      <div className="rounded-lg p-2 bg-neutral-800/80 border border-orange-500/10 text-center">
+                        <p className="text-xs text-orange-300/70">Permissions</p>
+                        <p className="text-sm font-semibold text-white">128</p>
+                      </div>
+                      <div className="rounded-lg p-2 bg-neutral-800/80 border border-orange-500/10 text-center">
+                        <p className="text-xs text-orange-300/70">Active</p>
+                        <p className="text-sm font-semibold text-white">8</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between mt-2">
+                      <span className="text-xs text-neutral-500">Last update</span>
+                      <span className="text-xs font-medium text-orange-300/80">2m ago</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="space-y-1">
-                <p className="text-sm font-semibold text-slate-900 dark:text-slate-50">
-                  Designed for teams
-                </p>
-                <p className="text-xs text-slate-600 dark:text-slate-300">
-                  Whether you&apos;re securing an internal tool or a full SaaS platform, this RBAC
-                  console gives you a clear, animated picture of who can do what.
-                </p>
+              <div className="absolute -bottom-4 left-6 rounded-full bg-neutral-950/95 border border-orange-500/20 px-3 py-1.5 shadow-lg flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-orange-400" />
+                <span className="text-xs text-orange-200">Designed for teams</span>
               </div>
             </div>
           </div>
         </section>
+
+        <section className="container mx-auto px-6 sm:px-10 pb-12">
+          <div className="max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <FeatureCard href="/permissions" title="Permissions" description="Create and organize fine‑grained capabilities." />
+              <FeatureCard href="/roles" title="Roles" description="Bundle permissions into reusable access levels." />
+              <FeatureCard href="/assign" title="Assign" description="Visually connect roles and permissions." />
+              <FeatureCard href="/natural-language" title="Natural language" description="Type a command. We handle the rest." />
+            </div>
+            <div className="glass-card rounded-3xl p-4 sm:p-5 flex items-center gap-4 mt-6">
+              <div className="h-12 w-12 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 flex items-center justify-center text-white shadow-lg lava-glow-sm">
+                <Sparkles className="h-6 w-6" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm font-semibold text-white">Built for teams</p>
+                <p className="text-xs text-neutral-400">Secure internal tools or full SaaS platforms with a clear picture of who can do what.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <footer className="border-t border-orange-500/10 py-6 mt-auto">
+          <div className="container mx-auto px-6 sm:px-10 flex flex-col items-center justify-center text-center">
+            <div className="text-sm text-neutral-500">© {new Date().getFullYear()} RBAC — All rights reserved</div>
+            <div className="flex items-center gap-4 text-sm text-orange-300/70">
+              <Link href="/" className="hover:text-orange-400 transition-colors">Terms</Link>
+              <Link href="/" className="hover:text-orange-400 transition-colors">Privacy</Link>
+            </div>
+          </div>
+        </footer>
       </div>
     </main>
   )
@@ -175,36 +196,26 @@ interface FeatureCardProps {
   href: string
   title: string
   description: string
-  color: string
 }
 
-function FeatureCard({ href, title, description, color }: FeatureCardProps) {
+function FeatureCard({ href, title, description }: FeatureCardProps) {
   return (
     <Link
       href={href}
-      className="group relative overflow-hidden rounded-3xl bg-white/70 dark:bg-slate-900/70 p-[1px] shadow-lg shadow-slate-900/5 hover:shadow-slate-900/20 transition-all hover:-translate-y-1"
+      className="group relative overflow-hidden rounded-2xl p-[1px] shadow-lg transition-all hover:-translate-y-1 border border-orange-500/20 bg-neutral-900/60 hover:border-orange-500/40"
+      aria-label={`Open ${title}`}
     >
-      <div
-        className={`absolute inset-0 bg-gradient-to-tr ${color} opacity-70 blur-xl group-hover:opacity-100 transition-opacity`}
-      />
-      <div className="relative h-full w-full rounded-[1.4rem] bg-slate-950/90 dark:bg-slate-950/95 px-4 py-4 flex flex-col justify-between">
-        <div className="space-y-1">
-          <p className="text-xs uppercase tracking-[0.16em] text-slate-400">
-            Feature
-          </p>
-          <h3 className="text-base sm:text-lg font-semibold text-slate-50">
-            {title}
-          </h3>
-          <p className="mt-1 text-[11px] sm:text-xs text-slate-300 leading-snug">
-            {description}
-          </p>
+      <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/20 to-amber-600/20 opacity-60 group-hover:opacity-100 transition-opacity blur-xl" aria-hidden />
+      <div className="relative rounded-xl bg-neutral-950/95 p-4 h-full flex flex-col justify-between border border-orange-500/10">
+        <div>
+          <p className="text-xs uppercase tracking-wider text-orange-400/80">Feature</p>
+          <h3 className="text-lg font-semibold mt-1 text-white">{title}</h3>
+          <p className="mt-2 text-sm text-neutral-400">{description}</p>
         </div>
-        <span className="mt-3 inline-flex items-center text-[11px] text-sky-300 group-hover:text-white transition-colors">
-          Open
-          <span className="ml-1 group-hover:translate-x-0.5 transition-transform">
-            →
-          </span>
-        </span>
+        <div className="mt-4 flex items-center justify-between">
+          <span className="inline-flex items-center text-sm text-orange-400 group-hover:text-orange-300 transition-colors">Open <span className="ml-2">→</span></span>
+          <span className="rounded-full bg-orange-500/20 px-3 py-1 text-xs text-orange-300">Try</span>
+        </div>
       </div>
     </Link>
   )

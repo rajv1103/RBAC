@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { useToast } from '@/components/ui/use-toast'
-import { Plus, Edit, Trash2, Shield, Search } from 'lucide-react'
+import { Plus, Edit, Trash2, Search } from 'lucide-react'
 
 interface Permission {
   id: string
@@ -22,11 +22,16 @@ interface Permission {
   }>
 }
 
+interface PermissionsManagerProps {
+  /** When provided, filters by this query and hides internal search (page provides header + search) */
+  searchQuery?: string
+}
+
 /**
  * Permissions Manager Component
- * Provides CRUD operations for permissions
+ * Provides CRUD operations for permissions. No duplicate header when used with searchQuery.
  */
-export default function PermissionsManager() {
+export default function PermissionsManager({ searchQuery }: PermissionsManagerProps) {
   const [permissions, setPermissions] = useState<Permission[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
@@ -34,6 +39,8 @@ export default function PermissionsManager() {
   const [editingPermission, setEditingPermission] = useState<Permission | null>(null)
   const [formData, setFormData] = useState({ name: '', description: '' })
   const { toast } = useToast()
+
+  const filterQuery = searchQuery !== undefined ? searchQuery : searchTerm
 
   // Fetch permissions
   const fetchPermissions = async () => {
@@ -170,34 +177,38 @@ export default function PermissionsManager() {
     setIsDialogOpen(true)
   }
 
-  // Filter permissions
+  // Filter permissions (use searchQuery from page or internal searchTerm)
   const filteredPermissions = permissions.filter(p =>
-    p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (p.description && p.description.toLowerCase().includes(searchTerm.toLowerCase()))
+    p.name.toLowerCase().includes(filterQuery.toLowerCase()) ||
+    (p.description && p.description.toLowerCase().includes(filterQuery.toLowerCase()))
   )
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl sm:text-3xl font-bold flex items-center gap-2 text-slate-900 dark:text-slate-50">
-            <span className="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-tr from-sky-500 via-cyan-500 to-emerald-400 text-white shadow-md shadow-sky-500/40">
-              <Shield className="h-5 w-5" />
-            </span>
-            Permissions Management
-          </h2>
-          <p className="text-sm text-slate-600 dark:text-slate-300 mt-1">
-            Create, search, and refine the atomic actions that power your roles.
-          </p>
-        </div>
+      {/* Toolbar: Create only (page provides title + search when searchQuery is passed) */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        {searchQuery === undefined && (
+          <div className="relative flex-1 max-w-xs">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
+            <Input
+              placeholder="Search permissions..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 rounded-xl border-orange-500/20 bg-neutral-900/80 text-white placeholder:text-neutral-500 focus-visible:ring-orange-500"
+            />
+          </div>
+        )}
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={handleCreate}>
+            <Button
+              onClick={handleCreate}
+              className="rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white shadow-lg lava-glow-sm"
+            >
               <Plus className="mr-2 h-4 w-4" />
-              Create Permission
+              New Permission
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="rounded-2xl">
             <form onSubmit={handleSubmit}>
               <DialogHeader>
                 <DialogTitle>
@@ -243,36 +254,25 @@ export default function PermissionsManager() {
         </Dialog>
       </div>
 
-      {/* Search */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
-        <Input
-          placeholder="Search permissions..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-10 bg-white/70 dark:bg-slate-900/70 border-slate-200/80 dark:border-slate-700/80 focus-visible:ring-sky-500"
-        />
-      </div>
-
       {/* Permissions Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {loading &&
           [1, 2, 3, 4, 5, 6].map((i) => (
             <div
               key={i}
-              className="h-32 rounded-2xl bg-slate-200/70 dark:bg-slate-800/60 animate-pulse"
+              className="h-32 rounded-2xl bg-neutral-800/60 animate-pulse"
             />
           ))}
 
         {!loading && filteredPermissions.map((permission) => (
           <Card
             key={permission.id}
-            className="relative overflow-hidden rounded-2xl border-0 bg-white/80 dark:bg-slate-950/80 shadow-lg shadow-slate-900/10 hover:shadow-2xl hover:-translate-y-1 transition-all"
+            className="relative overflow-hidden rounded-2xl border border-orange-500/20 glass-card hover:-translate-y-1 transition-all duration-200"
           >
-            <div className="pointer-events-none absolute inset-x-0 -top-10 h-16 bg-gradient-to-r from-sky-400/40 via-cyan-400/40 to-emerald-400/40 blur-2xl" />
+            <div className="pointer-events-none absolute inset-x-0 -top-10 h-16 bg-gradient-to-r from-orange-500/30 via-amber-500/20 to-orange-600/30 blur-2xl" />
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
-                <span className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-50">
+                <span className="text-base sm:text-lg font-semibold text-white">
                   {permission.name}
                 </span>
                 <div className="flex gap-2">
@@ -280,7 +280,7 @@ export default function PermissionsManager() {
                     variant="ghost"
                     size="icon"
                     onClick={() => handleEdit(permission)}
-                    className="hover:bg-sky-500/10 hover:text-sky-500"
+                    className="hover:bg-orange-500/10 hover:text-orange-400"
                   >
                     <Edit className="h-4 w-4" />
                   </Button>
@@ -299,9 +299,9 @@ export default function PermissionsManager() {
               )}
             </CardHeader>
             <CardContent>
-              <div className="text-sm text-slate-600 dark:text-slate-300 space-y-1">
+              <div className="text-sm text-neutral-400 space-y-1">
                 <p>Used by {permission.rolePermissions?.length || 0} role(s)</p>
-                <p className="text-[11px] text-slate-400 mt-1">
+                <p className="text-[11px] text-neutral-400 mt-1">
                   Created: {new Date(permission.createdAt).toLocaleDateString()}
                 </p>
               </div>
@@ -311,7 +311,7 @@ export default function PermissionsManager() {
       </div>
 
       {filteredPermissions.length === 0 && (
-        <div className="text-center py-12 text-gray-500">
+        <div className="text-center py-12 text-neutral-500">
           {searchTerm ? 'No permissions found matching your search' : 'No permissions yet. Create one to get started!'}
         </div>
       )}
