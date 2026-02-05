@@ -139,4 +139,14 @@
   .animate-ember-glow {
     animation: ember-glow 2.5s ease-in-out infinite;
   }
+
+  /* Password strength bar fill */
+  @keyframes strength-fill {
+    from {
+      width: 0;
+    }
+  }
+  .animate-strength-fill {
+    animation: strength-fill 0.4s ease-out forwards;
+  }
 }

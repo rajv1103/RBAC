@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { LogOut, User, Shield, ChevronDown, Menu, Settings, LayoutDashboard, X, KeyRound, Sparkles, Link2 } from 'lucide-react'
+import { LogOut, User, Shield, ChevronDown, Menu, LayoutDashboard, X, KeyRound, Sparkles, Link2 } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
 import { cn } from '@/lib/utils'
 
@@ -120,7 +120,6 @@ export default function DashboardHeader(): JSX.Element {
                 </div>
                 <div className="p-2 space-y-0.5">
                   <DropdownLink href="/profile" icon={<User className="h-4 w-4" />} label="My profile" />
-                  <DropdownLink href="/settings" icon={<Settings className="h-4 w-4" />} label="Settings" />
                   <div className="h-px bg-orange-500/10 my-2" />
                   <button
                     onClick={handleLogout}
